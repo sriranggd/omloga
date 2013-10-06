@@ -12,7 +12,20 @@ module Omloga
       @saved = false
       @count = 1
       @complete_count = 0
-      @lines = [start_line.to_s]
+      @status = []
+      @path = []
+      @lines = []
+      add_start_line(start_line.to_s)
+    end
+
+    def add_start_line(line)
+      self.lines << line
+      self.path << line.match(/Started [A-Z]+ "(.+)"/)[1]
+    end
+
+    def add_end_line(line)
+      self.lines << line
+      self.status << line.match(/Completed ([2-5][0-9][0-9]) /)[1].to_i
     end
 
     def mongo_doc
@@ -20,6 +33,8 @@ module Omloga
         '_id' => id,
         'pid' => pid,
         'count' => count,
+        'path' => path,
+        'status' => status,
         'lines' => lines.join("")
       }
 

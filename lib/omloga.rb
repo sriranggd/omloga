@@ -104,7 +104,7 @@ def omloga(args)
 
     if is_start_line?(log_line)
       if req
-        req.lines << log_line
+        req.add_start_line(log_line)
         req.count+= 1
       else
         req = Omloga::Request.new(pid, log_line)
@@ -117,9 +117,9 @@ def omloga(args)
         next 
       end
       is_complete = is_complete_line?(log_line)
-      req.lines << log_line
 
       if is_complete
+        req.add_end_line(log_line)
         req.complete_count+= 1
 
         if req.complete_count >= req.count
@@ -127,6 +127,8 @@ def omloga(args)
           request_hash.delete(pid)
           request_count+= req.count
         end
+      else
+        req.lines << log_line
       end
     end
     line_count+= 1
