@@ -1,13 +1,14 @@
 #encoding: utf-8
 
-require 'moped'
+require 'mongo'
 
 module Omloga
   class Request
-    attr_accessor :id, :pid, :saved, :lines, :count, :complete_count, :path, :status, :created_at, :updated_at
+    attr_accessor :id, :uuid, :pid, :saved, :lines, :count, :complete_count, :path, :status, :created_at, :updated_at
 
-    def initialize(pid, start_line)
-      @id = Moped::BSON::ObjectId.new
+    def initialize(uuid, pid, start_line)
+      @id = BSON::ObjectId.new
+      @uuid = uuid
       @pid = pid
       @saved = false
       @count = 1
@@ -31,11 +32,12 @@ module Omloga
     def mongo_doc
       obj = {
         '_id' => id,
+        'uuid' => uuid,
         'pid' => pid,
         'count' => count,
         'path' => path,
         'status' => status,
-        'lines' => lines.join("")
+        'lines' => lines
       }
 
       if saved
